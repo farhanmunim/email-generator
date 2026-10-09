@@ -12,7 +12,7 @@ export function createPalette({ root, actions, onAdded }) {
   root.replaceChildren(...BLOCK_TYPES.map((type) =>
     h('li', {},
       h('button', {
-        type: 'button', class: 'palette-item', draggable: 'true', 'data-type': type,
+        type: 'button', class: 'palette-item', draggable: 'true', 'data-type': type, title: BLOCKS[type].hint,
         onclick: () => { actions.add(type); onAdded?.(type); },
         ondragstart: (e) => {
           e.dataTransfer.effectAllowed = 'copy';
@@ -21,7 +21,7 @@ export function createPalette({ root, actions, onAdded }) {
         },
       },
       h('span', { class: 'pi-icon', html: icon(type, 20) }),
-      h('span', { class: 'pi-text' }, h('strong', {}, BLOCKS[type].label), h('small', {}, BLOCKS[type].hint))))));
+      h('span', { class: 'pi-label' }, BLOCKS[type].label)))));
 }
 
 export function createImageLibrary({ store, actions, form, grid, onAdded }) {

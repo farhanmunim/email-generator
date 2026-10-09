@@ -323,9 +323,16 @@ $('#btn-export').addEventListener('click', () => {
     $('#export-subject').textContent = store.doc.settings.subject;
     $('#export-size').textContent = formatBytes(lastExport.bytes);
     $('#export-actions').hidden = false;
-    for (const c of lastExport.checks) {
-      const word = { warn: 'Needs attention: ', info: 'Note: ', pass: 'OK: ' }[c.level];
-      exportWarnings.append(h('li', { class: `warn-${c.level}` }, h('span', { class: 'sr-only' }, word), c.message));
+    const problems = lastExport.checks.filter((c) => c.level !== 'pass');
+    const passes = lastExport.checks.filter((c) => c.level === 'pass');
+    for (const c of problems) {
+      exportWarnings.append(h('li', { class: `warn-${c.level}` }, h('span', { class: 'sr-only' }, c.level === 'warn' ? 'Needs attention: ' : 'Note: '), c.message));
+    }
+    if (!problems.length) exportWarnings.append(h('li', { class: 'warn-pass all-good' }, h('span', { class: 'sr-only' }, 'OK: '), 'Everything looks good.'));
+    if (passes.length) {
+      exportWarnings.append(h('li', { class: 'passes' }, h('details', {},
+        h('summary', {}, `${passes.length} check${passes.length === 1 ? '' : 's'} passed`),
+        h('ul', {}, passes.map((c) => h('li', { class: 'warn-pass' }, h('span', { class: 'sr-only' }, 'OK: '), c.message))))));
     }
   } catch (e) {
     console.error(e);

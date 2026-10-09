@@ -17,12 +17,13 @@ export function createSettingsPanel({ store, blockRoot, emailRoot, actions }) {
     }
     const def = BLOCKS[block.type];
     const head = h('div', { class: 'panel-head' },
-      h('div', { class: 'panel-title' }, h('span', { html: icon(block.type) }), h('h2', { id: 'block-settings-title' }, `${def.label} settings`)),
+      h('div', { class: 'panel-title' }, h('span', { html: icon(block.type, 16) }), h('h2', { id: 'block-settings-title' }, def.label)),
       h('div', { class: 'panel-actions' },
-        h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Duplicate block', title: 'Duplicate', html: icon('copy'), onclick: () => actions.duplicate(block.id) }),
-        h('button', { type: 'button', class: 'icon-btn danger', 'aria-label': 'Delete block', title: 'Delete', html: icon('trash'), onclick: () => actions.remove(block.id) })));
+        h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Duplicate block', title: 'Duplicate', html: icon('copy', 16), onclick: () => actions.duplicate(block.id) }),
+        h('button', { type: 'button', class: 'icon-btn danger', 'aria-label': 'Delete block', title: 'Delete', html: icon('trash', 16), onclick: () => actions.remove(block.id) })));
     const form = buildForm(def.groups, block, {
       doc: store.doc,
+      scope: block.type,
       onChange: (key, value) => {
         const id = block.id;
         store.commit((d) => {
@@ -39,13 +40,12 @@ export function createSettingsPanel({ store, blockRoot, emailRoot, actions }) {
     const settings = { ...store.doc.settings };
     const form = buildForm(SETTINGS_GROUPS, settings, {
       doc: store.doc,
+      scope: 'email',
       onChange: (key, value) => {
         store.commit((d) => { d.settings[key] = value; }, { key: `settings:${key}`, source: 'edit' });
       },
     });
-    emailRoot.append(
-      h('div', { class: 'panel-head' }, h('div', { class: 'panel-title' }, h('span', { html: icon('sliders') }), h('h2', {}, 'Email settings'))),
-      form);
+    emailRoot.append(form);
   }
 
   function render() {

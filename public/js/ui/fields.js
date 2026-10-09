@@ -150,12 +150,14 @@ function inboxWidget() {
  * Builds the form for a list of field groups.
  * `values` is the live object being edited; `onChange(key, value)` persists it.
  */
-export function buildForm(groups, values, { onChange, doc }) {
+const openState = new Map(); // remembers which sections the user opened, per scope + title
+
+export function buildForm(groups, values, { onChange, doc, scope = 'x' }) {
   const root = document.createDocumentFragment();
   const conditional = [];
   const widgets = [];
 
-  for (const group of groups) {
+  groups.forEach((group, gi) => {
     const grid = h('div', { class: 'fields' });
     for (const field of group.fields) {
       if (field.type === 'inbox') {
@@ -187,15 +189,36 @@ export function buildForm(groups, values, { onChange, doc }) {
       }
       if (!control) continue;
       const inlineLabel = field.type === 'checkbox';
-      const wrap = h('div', { class: `field${field.half ? ' half' : ''}${inlineLabel ? ' field-inline' : ''}` },
-        inlineLabel ? null : h('label', { id: `${id}-label`, for: field.type === 'segmented' ? null : id }, field.label),
-        control,
-        field.help ? h('p', { class: 'help' }, field.help) : null);
+      if (field.help && control.matches?.('input, select, textarea')) control.setAttribute('aria-describedby', `${id}-help`);
+      let labelEl = null;
+      let helpEl = null;
+      if (!inlineLabel) {
+        labelEl = h('label', { id: `${id}-label`, for: field.type === 'segmented' ? null : id }, field.label);
+        if (field.help) {
+          helpEl = h('p', { class: 'help field-help', id: `${id}-help`, hidden: true }, field.help);
+          const btn = h('button', {
+            type: 'button', class: 'info-btn', 'aria-expanded': 'false', 'aria-controls': `${id}-help`, 'aria-label': `More info: ${field.label}`,
+          }, 'i');
+          btn.addEventListener('click', () => {
+            helpEl.hidden = !helpEl.hidden;
+            btn.setAttribute('aria-expanded', String(!helpEl.hidden));
+          });
+          labelEl = h('div', { class: 'label-row' }, labelEl, btn);
+        }
+      } else if (field.help) {
+        helpEl = h('p', { class: 'help field-help', id: `${id}-help` }, field.help);
+      }
+      const wrap = h('div', { class: `field${field.half ? ' half' : ''}${inlineLabel ? ' field-inline' : ''}${field.type === 'range' ? ' field-range' : ''}` },
+        labelEl, control, helpEl);
       if (field.showIf) conditional.push({ wrap, field });
       grid.append(wrap);
     }
-    root.append(h('section', { class: 'group' }, h('h3', {}, group.title), grid));
-  }
+    const key = `${scope}:${group.title}`;
+    const open = openState.has(key) ? openState.get(key) : gi === 0;
+    const details = h('details', { class: 'group', open }, h('summary', {}, group.title), grid);
+    details.addEventListener('toggle', () => openState.set(key, details.open));
+    root.append(details);
+  });
 
   function refresh() {
     for (const { wrap, field } of conditional) wrap.hidden = !field.showIf(values);

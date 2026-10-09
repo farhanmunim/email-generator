@@ -339,34 +339,26 @@ export const SETTINGS_DEFAULTS = {
 
 export const SETTINGS_GROUPS = [
   {
-    title: 'Layout',
-    fields: [
-      { key: 'width', label: 'Content width', type: 'range', min: 320, max: 720, step: 10, unit: 'px' },
-      { key: 'outerPadding', label: 'Page padding (top/bottom)', type: 'range', min: 0, max: 80, unit: 'px' },
-    ],
-  },
-  {
-    title: 'Colours',
-    fields: [
-      { key: 'bg', label: 'Page background', type: 'color' },
-      { key: 'contentBg', label: 'Email background', type: 'color' },
-      { key: 'textColor', label: 'Body text', type: 'color' },
-      { key: 'headingColor', label: 'Headings', type: 'color' },
-      { key: 'linkColor', label: 'Links', type: 'color' },
-    ],
-  },
-  {
-    title: 'Typography',
-    fields: [{ key: 'fontFamily', label: 'Default font', type: 'select', options: fontOptions }],
-  },
-  {
     title: 'Inbox',
     fields: [
       { key: 'subject', label: 'Subject line', type: 'text', maxLength: 200,
-        help: 'Stored with the project and shown in the export checklist. Your platform sends the real subject.' },
+        help: 'Saved with the project and checked on export. Your email platform sends the real subject.' },
       { key: 'preheader', label: 'Preview text', type: 'text', maxLength: 200,
         help: 'The snippet shown next to the subject in most inboxes.' },
       { key: 'inbox', label: '', type: 'inbox' },
+    ],
+  },
+  {
+    title: 'Design',
+    fields: [
+      { key: 'width', label: 'Content width', type: 'range', min: 320, max: 720, step: 10, unit: 'px' },
+      { key: 'outerPadding', label: 'Page padding', type: 'range', min: 0, max: 80, unit: 'px' },
+      { key: 'fontFamily', label: 'Default font', type: 'select', options: fontOptions },
+      { key: 'bg', label: 'Page', type: 'color', half: true },
+      { key: 'contentBg', label: 'Email', type: 'color', half: true },
+      { key: 'textColor', label: 'Body text', type: 'color', half: true },
+      { key: 'headingColor', label: 'Headings', type: 'color', half: true },
+      { key: 'linkColor', label: 'Links', type: 'color', half: true },
     ],
   },
   {
@@ -376,9 +368,9 @@ export const SETTINGS_GROUPS = [
       { key: 'utmSource', label: 'utm_source', type: 'text', maxLength: 100, showIf: (p) => p.utmEnabled },
       { key: 'utmMedium', label: 'utm_medium', type: 'text', maxLength: 100, showIf: (p) => p.utmEnabled },
       { key: 'utmCampaign', label: 'utm_campaign', type: 'text', maxLength: 100, showIf: (p) => p.utmEnabled,
-        help: 'Added to every http(s) link on export (not unsubscribe links, merge-tag links, or ones that already have the parameter).' },
+        help: 'Added on export to http(s) links, except unsubscribe links, merge tags and links that already have it.' },
       { key: 'trackingPixel', label: 'Open-tracking pixel URL', type: 'text', maxLength: 2000, placeholder: 'https://… or {{ open_pixel_url }}',
-        help: 'Adds a hidden 1×1 image at the bottom. Most platforms add their own — only use this if yours gives you a URL. Open counts are unreliable (Apple Mail pre-loads images).' },
+        help: 'Adds a hidden 1×1 image. Most platforms add their own, so only use this if yours gives you a URL. Open counts are unreliable.' },
     ],
   },
 ];
