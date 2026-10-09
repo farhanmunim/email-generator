@@ -11,7 +11,7 @@ Production URL: <https://email-generator.farhan.app>
 - **Styling:** content width, page/email backgrounds, default font, text/heading/link colours, per-block font, size, colour, alignment, padding, background; button fill, border, radius, padding, full-width.
 - **Live preview:** Edit canvas plus a true Preview (the exported HTML in an iframe) in Desktop and Mobile widths.
 - **Export:** copy or download self-contained HTML, with a pre-export check (missing image URLs/alt text, buttons without links, `http://` images, Gmail's 102 KB clipping limit).
-- **Projects:** autosaved to `localStorage`; starter templates (blank, welcome, newsletter, promo); undo/redo; JSON import/export as a backup.
+- **Projects:** autosaved to `localStorage`; starter templates (blank, welcome, editorial newsletter, bold promo, dark product launch, event invitation, personal letter); undo/redo; JSON import/export as a backup.
 - **Accessible:** semantic landmarks, labelled controls, ARIA tabs/dialogs/live regions, full keyboard operation of the canvas, visible focus, reduced-motion support.
 - **Responsive UI:** three panels on desktop; on screens under 1024px they become Add / Canvas / Settings views with a bottom bar.
 

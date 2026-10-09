@@ -81,3 +81,10 @@ test('util helpers', () => {
   assert.equal(safeColor('red'), '');
   assert.ok(formatInline('**b** __i__', '#000').includes('<strong>b</strong> <em>i</em>'));
 });
+
+test('non-blank templates export with no warnings and unique ids', () => {
+  assert.equal(new Set(TEMPLATES.map((t) => t.id)).size, TEMPLATES.length);
+  for (const t of TEMPLATES.filter((x) => x.id !== 'blank')) {
+    assert.deepEqual(exportEmail(t.build()).warnings, [], t.id);
+  }
+});
