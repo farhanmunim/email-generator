@@ -43,7 +43,8 @@ export function safeUrl(value) {
   if (!cleaned) return '';
   const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(cleaned);
   if (scheme && !LINK_SCHEMES.has(scheme[1].toLowerCase())) return '';
-  return cleaned.replace(/\s/g, '%20');
+  // Keep merge tags like {{ unsubscribe_url }} intact; encode spaces in real URLs.
+  return hasMergeTag(cleaned) ? cleaned : cleaned.replace(/\s/g, '%20');
 }
 
 /** Image sources must be absolute http(s) URLs. Returns '' otherwise. */
@@ -75,4 +76,36 @@ export const slugify = (s) =>
 export function formatBytes(n) {
   if (n < 1024) return `${n} B`;
   return `${(n / 1024).toFixed(1)} KB`;
+}
+
+const MERGE_TAG = /\{\{|\}\}|\*\||\|\*|%%|\$\{|\[\[|<%/;
+/** True when a value contains an ESP merge tag such as {{ name }} or *|FNAME|*. */
+export const hasMergeTag = (v) => MERGE_TAG.test(String(v || ''));
+
+const NO_UTM = /unsubscribe|opt-?out|preferences|manage[-_]?subscription/i;
+
+/**
+ * Adds utm_* parameters to an http(s) URL without overwriting ones the user
+ * already set. Merge-tag URLs, anchors, mailto/tel and unsubscribe links are untouched.
+ */
+export function tagUrl(url, settings) {
+  if (!url || !settings || !settings.utmEnabled) return url;
+  if (!/^https?:\/\//i.test(url) || hasMergeTag(url) || NO_UTM.test(url)) return url;
+  try {
+    const u = new URL(url);
+    const add = (k, v) => { if (v && v.trim() && !u.searchParams.has(k)) u.searchParams.set(k, v.trim()); };
+    add('utm_source', settings.utmSource);
+    add('utm_medium', settings.utmMedium);
+    add('utm_campaign', settings.utmCampaign);
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
+/** Tracking pixel URL: https URL or a merge tag your ESP fills in. */
+export function safePixelUrl(value) {
+  const u = safeUrl(value);
+  if (!u) return '';
+  return /^https:\/\//i.test(u) || (!/^[a-z][a-z0-9+.-]*:/i.test(u) && hasMergeTag(u)) ? u : '';
 }

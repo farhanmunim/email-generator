@@ -284,54 +284,117 @@ fileInput.addEventListener('change', async () => {
   }
 });
 
-// Export HTML
+// Export
 const exportCode = $('#export-code');
+const exportText = $('#export-text');
 const exportWarnings = $('#export-warnings');
 let lastExport = null;
+let exportTab = 'html';
+const exportTabs = initTabs($('#export-tabs'), (name) => {
+  exportTab = name;
+  $('#btn-copy-label').textContent = name === 'html' ? 'Copy HTML' : 'Copy text';
+  $('#btn-download-label').textContent = name === 'html' ? 'Download .html' : 'Download .txt';
+});
+
+async function copyText(text, okMessage, fallbackEl) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(okMessage);
+  } catch {
+    try {
+      fallbackEl.focus();
+      fallbackEl.select();
+      if (!document.execCommand('copy')) throw new Error('copy rejected');
+      toast(okMessage);
+    } catch {
+      toast('Copy failed — select the text and copy it manually.', { kind: 'error' });
+    }
+  }
+}
+
 $('#btn-export').addEventListener('click', () => {
   const dlg = openDialog('export-dialog');
+  exportTabs.select('html');
   exportWarnings.replaceChildren();
   try {
     lastExport = exportEmail(store.doc);
     exportCode.value = lastExport.html;
+    exportText.value = lastExport.text;
+    $('#export-subject').textContent = store.doc.settings.subject;
     $('#export-size').textContent = formatBytes(lastExport.bytes);
     $('#export-actions').hidden = false;
-    for (const w of lastExport.warnings) {
-      exportWarnings.append(h('li', { class: `warn-${w.level}` }, h('span', { class: 'sr-only' }, w.level === 'warn' ? 'Warning: ' : 'Note: '), w.message));
+    for (const c of lastExport.checks) {
+      const word = { warn: 'Needs attention: ', info: 'Note: ', pass: 'OK: ' }[c.level];
+      exportWarnings.append(h('li', { class: `warn-${c.level}` }, h('span', { class: 'sr-only' }, word), c.message));
     }
-    if (!lastExport.warnings.length) exportWarnings.append(h('li', { class: 'warn-ok' }, 'No issues found.'));
   } catch (e) {
     console.error(e);
     lastExport = null;
     exportCode.value = '';
+    exportText.value = '';
     $('#export-actions').hidden = true;
     exportWarnings.append(h('li', { class: 'warn-warn' }, `Couldn’t generate the HTML: ${e.message}`));
   }
+  setupSendTest();
   dlg.querySelector('h2')?.focus?.();
 });
-$('#btn-copy').addEventListener('click', async () => {
+$('#btn-copy').addEventListener('click', () => {
   if (!lastExport) return;
-  try {
-    await navigator.clipboard.writeText(lastExport.html);
-    toast('HTML copied to clipboard');
-  } catch {
-    try {
-      exportCode.focus();
-      exportCode.select();
-      if (!document.execCommand('copy')) throw new Error('copy rejected');
-      toast('HTML copied to clipboard');
-    } catch {
-      toast('Copy failed — select the code and copy it manually.', { kind: 'error' });
-    }
-  }
+  if (exportTab === 'html') copyText(lastExport.html, 'HTML copied to clipboard', exportCode);
+  else copyText(lastExport.text, 'Plain text copied to clipboard', exportText);
+});
+$('#btn-copy-subject').addEventListener('click', () => {
+  const subject = store.doc.settings.subject.trim();
+  if (!subject) return toast('No subject set yet — add one in Email settings → Inbox', { kind: 'warn' });
+  copyText(subject, 'Subject copied', $('#btn-copy-subject'));
 });
 $('#btn-download').addEventListener('click', () => {
   if (!lastExport) return;
   try {
-    download(`${slugify(store.doc.name)}.html`, lastExport.html, 'text/html');
-    toast('HTML file downloaded');
+    if (exportTab === 'html') download(`${slugify(store.doc.name)}.html`, lastExport.html, 'text/html');
+    else download(`${slugify(store.doc.name)}.txt`, lastExport.text, 'text/plain');
+    toast('File downloaded');
   } catch (e) {
     toast(`Download failed: ${e.message}`, { kind: 'error' });
+  }
+});
+
+// Optional "send a test" — only shown when the Pages Function is configured (see README).
+const sendForm = $('#send-test');
+const sendStatus = $('#send-status');
+async function setupSendTest() {
+  let enabled = false;
+  try {
+    const r = await fetch('/api/send-test', { headers: { accept: 'application/json' } });
+    enabled = r.ok && (await r.json()).enabled === true;
+  } catch { /* offline or no function deployed: feature stays hidden */ }
+  sendForm.hidden = !enabled;
+  if (enabled) {
+    try { $('#send-to').value ||= localStorage.getItem('emailbuilder:v1:testTo') || ''; } catch { /* ignore */ }
+  }
+}
+sendForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const to = $('#send-to').value.trim();
+  if (!to || !$('#send-to').checkValidity()) { sendStatus.textContent = 'Enter a valid email address.'; $('#send-to').focus(); return; }
+  if (!lastExport) return;
+  const btn = $('#btn-send');
+  btn.disabled = true;
+  sendStatus.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/send-test', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ to, subject: store.doc.settings.subject, html: lastExport.html, text: lastExport.text }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || `Request failed (${r.status})`);
+    sendStatus.textContent = `Test sent to ${to}. Check your inbox (and spam folder).`;
+    try { localStorage.setItem('emailbuilder:v1:testTo', to); } catch { /* ignore */ }
+  } catch (err) {
+    sendStatus.textContent = `Couldn’t send: ${err.message}`;
+  } finally {
+    btn.disabled = false;
   }
 });
 

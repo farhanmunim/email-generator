@@ -294,6 +294,36 @@ dialog[open] { display: grid; gap: 12px; align-content: start; }
   background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 12px; resize: vertical; min-height: 220px;
 }
 
+/* ---------- export + inbox ---------- */
+.subject-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+.subject-row span { color: var(--muted); }
+.subject-row strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subject-row strong:empty::before { content: "Not set — add one in Email settings"; color: var(--muted); font-weight: 400; }
+.checklist { display: grid; gap: 4px; max-height: 24dvh; overflow: auto; }
+.checklist li { display: flex; gap: 8px; font-size: 13px; padding: 5px 10px; border-radius: 8px; border-left: 3px solid; }
+.checklist li::before { flex: none; font-weight: 700; width: 1em; text-align: center; }
+.checklist .warn-warn::before { content: "!"; }
+.checklist .warn-info::before { content: "i"; }
+.checklist .warn-pass { background: transparent; border-color: #86efac; color: var(--muted); }
+.checklist .warn-pass::before { content: "✓"; color: var(--ok); }
+#export-text.plain { background: #fff; color: var(--text); border: 1px solid var(--border); white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
+#export-dialog textarea { width: 100%; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; border-radius: 10px; padding: 12px; resize: vertical; min-height: 200px; }
+.send-test { display: grid; gap: 6px; border-top: 1px solid var(--border); padding-top: 4px; }
+.send-row { display: flex; gap: 8px; }
+.send-row input { flex: 1; }
+.inbox { margin: 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); padding: 10px 12px; display: grid; gap: 8px; }
+.inbox-row { display: flex; gap: 10px; align-items: flex-start; }
+.inbox-dot { width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: var(--accent); flex: none; }
+.inbox-main { min-width: 0; flex: 1; font-size: 13px; line-height: 1.35; }
+.inbox-top { display: flex; justify-content: space-between; gap: 8px; }
+.inbox-top span { color: var(--muted); font-size: 12px; }
+.inbox-subject, .inbox-pre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inbox-subject { font-weight: 600; }
+.inbox-pre { color: var(--muted); }
+.is-empty { font-style: italic; opacity: 0.7; }
+.inbox-counts .over { color: var(--warn); font-weight: 600; }
+.field-note { grid-column: span 2; }
+
 /* ---------- toasts ---------- */
 #toasts { position: fixed; z-index: 200; inset: auto auto 20px 50%; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; overflow: visible; transform: translateX(-50%); display: grid; gap: 8px; width: max-content; max-width: calc(100vw - 24px); pointer-events: none; }
 #toasts:not(:popover-open):empty { display: none; }

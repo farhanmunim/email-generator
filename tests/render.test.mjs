@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDoc, createBlock, normalizeDoc } from '../public/js/blocks.js';
-import { renderEmail, exportEmail, formatInline } from '../public/js/render.js';
+import { renderEmail, exportEmail, formatInline, renderPlainText, runChecks } from '../public/js/render.js';
 import { TEMPLATES } from '../public/js/templates.js';
-import { safeUrl, safeImageUrl, safeColor } from '../public/js/util.js';
+import { safeUrl, safeImageUrl, safeColor, tagUrl } from '../public/js/util.js';
 
 test('every template exports valid-looking, self-contained HTML', () => {
   for (const t of TEMPLATES) {
@@ -87,4 +87,58 @@ test('non-blank templates export with no warnings and unique ids', () => {
   for (const t of TEMPLATES.filter((x) => x.id !== 'blank')) {
     assert.deepEqual(exportEmail(t.build()).warnings, [], t.id);
   }
+});
+
+test('new blocks render, escape and stack on mobile', () => {
+  const doc = createDoc('x', [
+    createBlock('columns', { c1Title: '<b>x</b>', c1Url: 'https://a.com/1', c1Image: 'https://i.com/a.png', c1Alt: 'a' }),
+    createBlock('quote', { quote: '<i>q</i>' }),
+    createBlock('social', { x: 'https://x.com/a', facebook: 'javascript:alert(1)' }),
+    createBlock('footer', { unsubscribeUrl: '{{ unsubscribe_url }}' }),
+  ]);
+  const html = renderEmail(doc);
+  assert.ok(html.includes('&lt;b&gt;x&lt;/b&gt;') && html.includes('&lt;i&gt;q&lt;/i&gt;'));
+  assert.ok(!/javascript:/i.test(html) && !html.includes('Facebook'));
+  assert.ok(html.includes('class="em-col em-col-l"') && html.includes('.em-col{display:block!important'));
+  assert.ok(html.includes('href="{{ unsubscribe_url }}"'), 'merge tag keeps its spaces');
+});
+
+test('UTM tagging respects existing params, merge tags and unsubscribe links', () => {
+  const settings = { utmEnabled: true, utmSource: 'news', utmMedium: 'email', utmCampaign: 'spring sale' };
+  assert.equal(tagUrl('https://a.com/p?utm_source=x#f', settings), 'https://a.com/p?utm_source=x&utm_medium=email&utm_campaign=spring+sale#f');
+  assert.equal(tagUrl('{{ url }}', settings), '{{ url }}');
+  assert.equal(tagUrl('https://a.com/unsubscribe', settings), 'https://a.com/unsubscribe');
+  assert.equal(tagUrl('mailto:a@b.co', settings), 'mailto:a@b.co');
+  assert.equal(tagUrl('https://a.com/', { ...settings, utmEnabled: false }), 'https://a.com/');
+  const doc = createDoc('x', [createBlock('button', { text: 'Go', url: 'https://a.com' }), createBlock('text', { text: '[l](https://b.com)' })], settings);
+  const html = renderEmail(doc);
+  assert.ok(html.includes('https://a.com/?utm_source=news') && html.includes('https://b.com/?utm_source=news'));
+});
+
+test('tracking pixel only accepts https URLs or merge tags', () => {
+  const withPixel = (px) => renderEmail(createDoc('x', [createBlock('text')], { trackingPixel: px }));
+  assert.match(withPixel('https://t.example.com/p.gif?id=1&x=2'), /<img src="https:\/\/t\.example\.com\/p\.gif\?id=1&amp;x=2" width="1" height="1"/);
+  assert.match(withPixel('{{ open_pixel_url }}'), /<img src="\{\{ open_pixel_url \}\}" width="1"/);
+  assert.ok(!withPixel('http://t.example.com/p.gif').includes('width="1" height="1"'));
+  assert.ok(!withPixel('javascript:alert(1)').includes('width="1" height="1"'));
+});
+
+test('plain text version strips formatting and keeps links', () => {
+  const doc = createDoc('x', [
+    createBlock('heading', { text: 'Hello', level: 1 }),
+    createBlock('text', { text: 'Some **bold** and [a link](https://a.com).' }),
+    createBlock('button', { text: 'Go', url: 'https://a.com/go' }),
+    createBlock('divider'),
+  ]);
+  const text = renderPlainText(doc);
+  assert.equal(text, 'HELLO\n\nSome bold and a link (https://a.com).\n\nGo: https://a.com/go\n\n----------\n');
+});
+
+test('checklist flags missing subject/unsubscribe and passes good emails', () => {
+  const bad = runChecks(createDoc('x', [createBlock('text')]));
+  assert.ok(bad.some((c) => c.level === 'warn' && /subject/i.test(c.message)));
+  assert.ok(bad.some((c) => c.level === 'warn' && /unsubscribe/i.test(c.message)));
+  const good = runChecks(createDoc('x', [createBlock('text'), createBlock('footer')], { subject: 'Hello there', preheader: 'p' }));
+  assert.ok(!good.some((c) => c.level === 'warn'));
+  assert.ok(good.some((c) => c.level === 'pass' && /unsubscribe/i.test(c.message)));
 });

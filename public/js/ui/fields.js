@@ -118,6 +118,34 @@ function checkboxControl(field, value, set, id) {
     h('span', {}, field.label));
 }
 
+function inboxWidget() {
+  const subject = h('div', { class: 'inbox-subject' });
+  const pre = h('div', { class: 'inbox-pre' });
+  const counts = h('p', { class: 'help inbox-counts' });
+  const el = h('figure', { class: 'inbox', 'aria-label': 'Inbox preview' },
+    h('div', { class: 'inbox-row' },
+      h('span', { class: 'inbox-dot', 'aria-hidden': 'true' }),
+      h('div', { class: 'inbox-main' },
+        h('div', { class: 'inbox-top' }, h('strong', {}, 'Your brand'), h('span', {}, '9:41')),
+        subject, pre)),
+    counts);
+  return {
+    el,
+    update(values) {
+      const sub = (values.subject || '').trim();
+      const prev = (values.preheader || '').trim();
+      subject.textContent = sub || '(no subject)';
+      subject.classList.toggle('is-empty', !sub);
+      pre.textContent = prev || 'No preview text — the first words of the email are shown instead.';
+      pre.classList.toggle('is-empty', !prev);
+      counts.replaceChildren(
+        h('span', { class: sub.length > 60 ? 'over' : '' }, `Subject ${sub.length}/60`),
+        ' · ',
+        h('span', { class: prev.length > 110 ? 'over' : '' }, `Preview ${prev.length}/110`));
+    },
+  };
+}
+
 /**
  * Builds the form for a list of field groups.
  * `values` is the live object being edited; `onChange(key, value)` persists it.
@@ -125,10 +153,21 @@ function checkboxControl(field, value, set, id) {
 export function buildForm(groups, values, { onChange, doc }) {
   const root = document.createDocumentFragment();
   const conditional = [];
+  const widgets = [];
 
   for (const group of groups) {
     const grid = h('div', { class: 'fields' });
     for (const field of group.fields) {
+      if (field.type === 'inbox') {
+        const w = inboxWidget();
+        widgets.push(w);
+        grid.append(h('div', { class: 'field' }, w.el));
+        continue;
+      }
+      if (field.type === 'note') {
+        grid.append(h('p', { class: 'help field-note' }, field.help));
+        continue;
+      }
       const id = nextId();
       const set = (v) => {
         values[field.key] = v; // keep local view current for showIf
@@ -160,6 +199,7 @@ export function buildForm(groups, values, { onChange, doc }) {
 
   function refresh() {
     for (const { wrap, field } of conditional) wrap.hidden = !field.showIf(values);
+    for (const w of widgets) w.update(values);
   }
   refresh();
   return root;

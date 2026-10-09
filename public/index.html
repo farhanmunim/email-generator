@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="css/styles.css">
 <style id="mobile-canvas-css"></style>
 <script type="module" src="js/main.js"></script>
+<!-- Umami analytics (page views of this app only; never email content). Only reports from the production domain. -->
+<script defer src="https://mochi.farhan.app/script.js" data-website-id="86e82dd3-0610-483e-baa3-a79f72f6ec15" data-domains="email-generator.farhan.app"></script>
 </head>
 <body>
 <a class="skip-link" href="#canvas">Skip to email canvas</a>
@@ -127,16 +129,40 @@
 </dialog>
 
 <dialog id="export-dialog" class="wide" aria-labelledby="export-title">
-  <div class="dialog-head"><h2 id="export-title" tabindex="-1">Export HTML</h2><button type="button" class="icon-btn" data-close aria-label="Close" data-icon="x"></button></div>
-  <p class="help">Self-contained HTML with inline CSS and table-based layout. Paste it into your email platform’s “custom HTML” editor, or send it as-is.</p>
-  <ul class="warnings" id="export-warnings" aria-label="Export checks"></ul>
-  <label class="sr-only" for="export-code">Generated HTML</label>
-  <textarea id="export-code" readonly spellcheck="false" rows="14"></textarea>
+  <div class="dialog-head"><h2 id="export-title" tabindex="-1">Export</h2><button type="button" class="icon-btn" data-close aria-label="Close" data-icon="x"></button></div>
+  <div class="subject-row"><span>Subject</span><strong id="export-subject"></strong><button type="button" class="mini" id="btn-copy-subject">Copy</button></div>
+  <section aria-labelledby="checks-title">
+    <h3 class="lib-title" id="checks-title">Pre-send checklist</h3>
+    <ul class="checklist" id="export-warnings"></ul>
+  </section>
+  <div class="tabs" role="tablist" aria-label="Export format" id="export-tabs">
+    <button type="button" role="tab" id="tab-export-html" data-tab="html" aria-selected="true" aria-controls="pane-export-html">HTML</button>
+    <button type="button" role="tab" id="tab-export-text" data-tab="text" aria-selected="false" tabindex="-1" aria-controls="pane-export-text">Plain text</button>
+  </div>
+  <div role="tabpanel" id="pane-export-html" aria-labelledby="tab-export-html">
+    <p class="help">Self-contained HTML with inline CSS and table-based layout. Paste it into your email platform’s custom-HTML editor.</p>
+    <label class="sr-only" for="export-code">Generated HTML</label>
+    <textarea id="export-code" readonly spellcheck="false" rows="12"></textarea>
+  </div>
+  <div role="tabpanel" id="pane-export-text" aria-labelledby="tab-export-text" hidden>
+    <p class="help">Plain-text alternative for the “text” part of a multipart email — it improves deliverability.</p>
+    <label class="sr-only" for="export-text">Plain text version</label>
+    <textarea id="export-text" class="plain" readonly spellcheck="false" rows="12"></textarea>
+  </div>
   <div class="dialog-toolbar" id="export-actions">
-    <button type="button" class="btn btn-primary" id="btn-copy"><span data-icon="copy" data-size="16"></span> Copy HTML</button>
-    <button type="button" class="btn" id="btn-download"><span data-icon="download" data-size="16"></span> Download .html</button>
+    <button type="button" class="btn btn-primary" id="btn-copy"><span data-icon="copy" data-size="16"></span> <span id="btn-copy-label">Copy HTML</span></button>
+    <button type="button" class="btn" id="btn-download"><span data-icon="download" data-size="16"></span> <span id="btn-download-label">Download .html</span></button>
     <span class="help">Size: <strong id="export-size">–</strong></span>
   </div>
+  <form class="send-test" id="send-test" hidden novalidate>
+    <h3 class="lib-title">Send a test</h3>
+    <div class="send-row">
+      <label class="sr-only" for="send-to">Send test to</label>
+      <input id="send-to" type="email" placeholder="you@example.com" autocomplete="email" required>
+      <button type="submit" class="btn" id="btn-send"><span data-icon="mail" data-size="16"></span> Send test</button>
+    </div>
+    <p class="help" id="send-status" role="status"></p>
+  </form>
 </dialog>
 
 <div id="toasts" popover="manual" role="status" aria-live="polite"></div>

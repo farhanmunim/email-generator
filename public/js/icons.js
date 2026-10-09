@@ -24,6 +24,11 @@ const P = {
   code: '<path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>',
   check: '<path d="m20 6-11 11-5-5"/>',
+  columns: '<rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/>',
+  quote: '<path d="M9 17H5a1 1 0 0 1-1-1v-4a4 4 0 0 1 4-4M19 17h-4a1 1 0 0 1-1-1v-4a4 4 0 0 1 4-4"/>',
+  social: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/>',
+  footer: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15h18M7 18.5h6"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   blocks: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/>',
 };
 

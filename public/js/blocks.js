@@ -184,6 +184,135 @@ export const BLOCKS = {
       spacingGroup,
     ],
   },
+  columns: {
+    label: 'Two columns',
+    hint: 'Side-by-side cards, stack on mobile',
+    defaults: () => ({
+      gap: 24, align: 'left', titleSize: 18, textSize: 15, radius: 0, bg: '', ...padding(16, 16, 32, 32),
+      c1Image: '', c1Alt: '', c1Title: 'Feature one', c1Text: 'A short description of this feature or story.', c1Label: 'Learn more', c1Url: '',
+      c2Image: '', c2Alt: '', c2Title: 'Feature two', c2Text: 'A short description of this feature or story.', c2Label: 'Learn more', c2Url: '',
+    }),
+    groups: [1, 2].map((n) => ({
+      title: `Column ${n}`,
+      fields: [
+        { key: `c${n}Image`, label: 'Image URL (optional)', type: 'image' },
+        { key: `c${n}Alt`, label: 'Alt text', type: 'text', maxLength: 300 },
+        { key: `c${n}Title`, label: 'Title', type: 'text', maxLength: 200 },
+        { key: `c${n}Text`, label: 'Text', type: 'textarea', rows: 3, maxLength: 2000 },
+        { key: `c${n}Label`, label: 'Link label', type: 'text', maxLength: 80 },
+        { key: `c${n}Url`, label: 'Link URL', type: 'url', placeholder: 'https://…', maxLength: 2000 },
+      ],
+    })).concat([
+      {
+        title: 'Style',
+        fields: [
+          { key: 'gap', label: 'Gap between columns', type: 'range', min: 0, max: 48, unit: 'px' },
+          { key: 'align', label: 'Text alignment', type: 'segmented', options: ALIGN.slice(0, 2) },
+          { key: 'titleSize', label: 'Title size', type: 'range', min: 14, max: 32, unit: 'px' },
+          { key: 'textSize', label: 'Text size', type: 'range', min: 12, max: 22, unit: 'px' },
+          { key: 'radius', label: 'Image corner radius', type: 'range', min: 0, max: 32, unit: 'px' },
+        ],
+      },
+      spacingGroup,
+    ]),
+  },
+  quote: {
+    label: 'Quote',
+    hint: 'Testimonial or pull quote',
+    defaults: () => ({
+      quote: '“A short, memorable quote goes here.”', author: 'Name Surname', role: 'Title, Company', variant: 'bar',
+      fontSize: 20, fontFamily: 'inherit', color: '', accent: '#2563eb', bg: '', ...padding(16, 16, 32, 32),
+    }),
+    groups: [
+      {
+        title: 'Content',
+        fields: [
+          { key: 'quote', label: 'Quote', type: 'textarea', rows: 3, maxLength: 1000 },
+          { key: 'author', label: 'Name', type: 'text', maxLength: 120 },
+          { key: 'role', label: 'Role / company', type: 'text', maxLength: 160 },
+        ],
+      },
+      {
+        title: 'Style',
+        fields: [
+          { key: 'variant', label: 'Layout', type: 'segmented', options: [{ value: 'bar', label: 'Side bar' }, { value: 'centered', label: 'Centred' }] },
+          { key: 'fontFamily', label: 'Font', type: 'select', options: fontOptionsInherit },
+          { key: 'fontSize', label: 'Size', type: 'range', min: 14, max: 36, unit: 'px' },
+          { key: 'color', label: 'Text colour', type: 'color', allowNone: true, noneLabel: 'Default', inherit: 'headingColor' },
+          { key: 'accent', label: 'Accent colour', type: 'color' },
+        ],
+      },
+      spacingGroup,
+    ],
+  },
+  social: {
+    label: 'Social links',
+    hint: 'Text links to your profiles',
+    defaults: () => ({
+      facebook: '', instagram: '', x: '', linkedin: '', youtube: '', tiktok: '', website: '',
+      align: 'center', fontSize: 13, bold: true, color: '', separator: '·', bg: '', ...padding(16, 16, 32, 32),
+    }),
+    groups: [
+      {
+        title: 'Profile links',
+        fields: [
+          { key: 'website', label: 'Website', type: 'url', placeholder: 'https://…', maxLength: 2000 },
+          { key: 'facebook', label: 'Facebook', type: 'url', placeholder: 'https://facebook.com/…', maxLength: 2000 },
+          { key: 'instagram', label: 'Instagram', type: 'url', placeholder: 'https://instagram.com/…', maxLength: 2000 },
+          { key: 'x', label: 'X (Twitter)', type: 'url', placeholder: 'https://x.com/…', maxLength: 2000 },
+          { key: 'linkedin', label: 'LinkedIn', type: 'url', placeholder: 'https://linkedin.com/…', maxLength: 2000 },
+          { key: 'youtube', label: 'YouTube', type: 'url', placeholder: 'https://youtube.com/…', maxLength: 2000 },
+          { key: 'tiktok', label: 'TikTok', type: 'url', placeholder: 'https://tiktok.com/@…', maxLength: 2000 },
+          { key: 'networksHelp', label: '', type: 'note', help: 'Links are plain text, not icons — they always display, even with images blocked. Empty fields are left out.' },
+        ],
+      },
+      {
+        title: 'Style',
+        fields: [
+          { key: 'separator', label: 'Separator', type: 'select', options: [{ value: '·', label: 'Dot ·' }, { value: '|', label: 'Bar |' }, { value: '•', label: 'Bullet •' }, { value: '/', label: 'Slash /' }, { value: ' ', label: 'Space only' }] },
+          { key: 'fontSize', label: 'Size', type: 'range', min: 11, max: 22, unit: 'px' },
+          { key: 'bold', label: 'Bold', type: 'checkbox' },
+          { key: 'align', label: 'Alignment', type: 'segmented', options: ALIGN },
+          { key: 'color', label: 'Link colour', type: 'color', allowNone: true, noneLabel: 'Default', inherit: 'linkColor' },
+        ],
+      },
+      spacingGroup,
+    ],
+  },
+  footer: {
+    label: 'Footer',
+    hint: 'Address, unsubscribe, view online',
+    defaults: () => ({
+      company: 'Your Company', address: '123 Example Street, City, Country',
+      note: 'You are receiving this email because you signed up on our website.',
+      unsubscribeLabel: 'Unsubscribe', unsubscribeUrl: '{{ unsubscribe_url }}',
+      browserLabel: 'View in browser', browserUrl: '',
+      fontSize: 12, color: '#9ca3af', align: 'center', bg: '', ...padding(24, 32, 32, 32),
+    }),
+    groups: [
+      {
+        title: 'Content',
+        fields: [
+          { key: 'company', label: 'Company name', type: 'text', maxLength: 120 },
+          { key: 'address', label: 'Postal address', type: 'textarea', rows: 2, maxLength: 300, help: 'Most anti-spam laws require a physical address in marketing email.' },
+          { key: 'note', label: 'Why they got this', type: 'textarea', rows: 2, maxLength: 300 },
+          { key: 'unsubscribeLabel', label: 'Unsubscribe label', type: 'text', maxLength: 60 },
+          { key: 'unsubscribeUrl', label: 'Unsubscribe URL', type: 'url', maxLength: 2000, help: 'Use your platform’s merge tag, e.g. {{ unsubscribe_url }} or *|UNSUB|*.' },
+          { key: 'browserLabel', label: '“View in browser” label', type: 'text', maxLength: 60 },
+          { key: 'browserUrl', label: '“View in browser” URL', type: 'url', maxLength: 2000, placeholder: 'Optional' },
+        ],
+      },
+      {
+        title: 'Style',
+        fields: [
+          { key: 'fontSize', label: 'Size', type: 'range', min: 10, max: 16, unit: 'px' },
+          { key: 'color', label: 'Text colour', type: 'color' },
+          { key: 'align', label: 'Alignment', type: 'segmented', options: ALIGN },
+        ],
+      },
+      spacingGroup,
+    ],
+  },
   spacer: {
     label: 'Spacer',
     hint: 'Empty vertical space',
@@ -205,6 +334,7 @@ export const BLOCK_TYPES = Object.keys(BLOCKS);
 export const SETTINGS_DEFAULTS = {
   width: 600, outerPadding: 24, bg: '#f3f4f6', contentBg: '#ffffff', textColor: '#374151',
   headingColor: '#111827', linkColor: '#2563eb', fontFamily: 'arial', preheader: '',
+  subject: '', trackingPixel: '', utmEnabled: false, utmSource: 'newsletter', utmMedium: 'email', utmCampaign: '',
 };
 
 export const SETTINGS_GROUPS = [
@@ -232,8 +362,23 @@ export const SETTINGS_GROUPS = [
   {
     title: 'Inbox',
     fields: [
+      { key: 'subject', label: 'Subject line', type: 'text', maxLength: 200,
+        help: 'Stored with the project and shown in the export checklist. Your platform sends the real subject.' },
       { key: 'preheader', label: 'Preview text', type: 'text', maxLength: 200,
-        help: 'The snippet shown next to the subject line in most inboxes.' },
+        help: 'The snippet shown next to the subject in most inboxes.' },
+      { key: 'inbox', label: '', type: 'inbox' },
+    ],
+  },
+  {
+    title: 'Tracking',
+    fields: [
+      { key: 'utmEnabled', label: 'Add UTM parameters to links', type: 'checkbox' },
+      { key: 'utmSource', label: 'utm_source', type: 'text', maxLength: 100, showIf: (p) => p.utmEnabled },
+      { key: 'utmMedium', label: 'utm_medium', type: 'text', maxLength: 100, showIf: (p) => p.utmEnabled },
+      { key: 'utmCampaign', label: 'utm_campaign', type: 'text', maxLength: 100, showIf: (p) => p.utmEnabled,
+        help: 'Added to every http(s) link on export (not unsubscribe links, merge-tag links, or ones that already have the parameter).' },
+      { key: 'trackingPixel', label: 'Open-tracking pixel URL', type: 'text', maxLength: 2000, placeholder: 'https://… or {{ open_pixel_url }}',
+        help: 'Adds a hidden 1×1 image at the bottom. Most platforms add their own — only use this if yours gives you a URL. Open counts are unreliable (Apple Mail pre-loads images).' },
     ],
   },
 ];
@@ -255,6 +400,9 @@ function coerce(field, value, fallback) {
       const match = field.options.find((o) => String(o.value) === String(value));
       return match ? match.value : fallback;
     }
+    case 'inbox':
+    case 'note':
+      return undefined;
     case 'image':
       return safeImageUrl(value) ? String(value).trim().slice(0, 2000) : '';
     case 'url':
@@ -276,6 +424,7 @@ export function normalizeBlock(raw) {
   const defaults = def.defaults();
   const block = { id: typeof raw.id === 'string' && raw.id ? raw.id.slice(0, 40) : uid(), type: raw.type };
   for (const field of flatten(def.groups)) {
+    if (field.type === 'note') continue;
     block[field.key] = coerce(field, raw[field.key], defaults[field.key]);
   }
   return block;
@@ -284,6 +433,7 @@ export function normalizeBlock(raw) {
 export function normalizeSettings(raw = {}) {
   const out = {};
   for (const field of flatten(SETTINGS_GROUPS)) {
+    if (field.type === 'inbox') continue;
     out[field.key] = coerce(field, raw[field.key], SETTINGS_DEFAULTS[field.key]);
   }
   return out;
