@@ -1,0 +1,5 @@
+# Optional: only needed for CLI deploys (`npx wrangler pages deploy`).
+# Git-connected Cloudflare Pages projects ignore this file's name/domain settings.
+name = "email-generator"
+pages_build_output_dir = "public"
+compatibility_date = "2025-01-01"

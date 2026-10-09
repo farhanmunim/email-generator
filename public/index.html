@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Email Template Builder</title>
+<meta name="description" content="A free, lightweight visual email template builder. Drag, drop and customise blocks, preview on desktop and mobile, then export clean email-ready HTML.">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css">
+<style id="mobile-canvas-css"></style>
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#canvas">Skip to email canvas</a>
+<noscript><p class="noscript">This email builder needs JavaScript to run.</p></noscript>
+
+<div class="app" id="app" data-view="canvas" data-mode="edit" data-device="desktop">
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" data-icon="layout" data-size="20" aria-hidden="true"></span>
+      <span class="brand-name">Email Builder</span>
+    </div>
+    <div class="project">
+      <label class="sr-only" for="project-name">Project name</label>
+      <input id="project-name" class="project-name" type="text" maxlength="80" autocomplete="off" spellcheck="false">
+      <span id="save-status" class="save-status" data-state="saved" role="status">Saved locally</span>
+    </div>
+    <div class="topbar-actions">
+      <div class="btn-group" role="group" aria-label="History">
+        <button type="button" class="icon-btn" id="btn-undo" aria-label="Undo" title="Undo (Ctrl+Z)" data-icon="undo" disabled></button>
+        <button type="button" class="icon-btn" id="btn-redo" aria-label="Redo" title="Redo (Ctrl+Shift+Z)" data-icon="redo" disabled></button>
+      </div>
+      <button type="button" class="btn" id="btn-templates"><span data-icon="layout" data-size="16"></span><span class="btn-label">Templates</span></button>
+      <button type="button" class="btn" id="btn-projects"><span data-icon="folder" data-size="16"></span><span class="btn-label">Projects</span></button>
+      <button type="button" class="btn btn-primary" id="btn-export"><span data-icon="code" data-size="16"></span><span class="btn-label">Export HTML</span></button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel panel-left" id="panel-left" aria-label="Blocks and images">
+      <div class="tabs" role="tablist" aria-label="Library" id="left-tabs">
+        <button type="button" role="tab" id="tab-blocks" data-tab="blocks" aria-selected="true" aria-controls="pane-blocks">Blocks</button>
+        <button type="button" role="tab" id="tab-images" data-tab="images" aria-selected="false" tabindex="-1" aria-controls="pane-images">Images</button>
+      </div>
+      <div class="pane" id="pane-blocks" role="tabpanel" aria-labelledby="tab-blocks">
+        <p class="help pane-help">Click to add after the selected block, or drag onto the canvas.</p>
+        <ul class="palette" id="palette"></ul>
+      </div>
+      <div class="pane" id="pane-images" role="tabpanel" aria-labelledby="tab-images" hidden>
+        <form class="lib-form" id="lib-form" novalidate>
+          <div class="field">
+            <label for="lib-url">Image URL</label>
+            <input id="lib-url" type="url" placeholder="https://example.com/photo.jpg" autocomplete="off" spellcheck="false" aria-describedby="lib-hint">
+            <p class="help error" id="lib-hint" hidden></p>
+          </div>
+          <div id="lib-preview"></div>
+          <div class="field">
+            <label for="lib-alt">Alt text <span class="optional">(optional)</span></label>
+            <input id="lib-alt" type="text" maxlength="300" autocomplete="off">
+          </div>
+          <div class="lib-buttons">
+            <button type="button" class="btn btn-primary" id="lib-add">Add to email</button>
+            <button type="button" class="btn" id="lib-use" disabled>Use in selected image</button>
+            <button type="button" class="btn" id="lib-save">Save to library</button>
+          </div>
+        </form>
+        <h3 class="lib-title">Library</h3>
+        <ul class="lib-grid" id="lib-grid" aria-label="Saved images"></ul>
+      </div>
+    </aside>
+
+    <section class="stage" aria-label="Email canvas and preview">
+      <div class="stage-bar">
+        <div class="seg seg-buttons" role="group" aria-label="Mode">
+          <button type="button" data-mode-btn="edit" aria-pressed="true"><span data-icon="edit" data-size="16"></span> Edit</button>
+          <button type="button" data-mode-btn="preview" aria-pressed="false"><span data-icon="eye" data-size="16"></span> Preview</button>
+        </div>
+        <div class="seg seg-buttons" role="group" aria-label="Device width">
+          <button type="button" data-device-btn="desktop" aria-pressed="true" aria-label="Desktop width"><span data-icon="desktop" data-size="16"></span> <span class="btn-label">Desktop</span></button>
+          <button type="button" data-device-btn="mobile" aria-pressed="false" aria-label="Mobile width"><span data-icon="mobile" data-size="16"></span> <span class="btn-label">Mobile</span></button>
+        </div>
+      </div>
+      <div class="stage-scroll">
+        <div class="canvas" id="canvas" tabindex="-1"></div>
+        <div class="preview" id="preview">
+          <iframe id="preview-frame" title="Email preview" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel panel-right" id="panel-right" aria-label="Settings">
+      <div class="tabs" role="tablist" aria-label="Settings" id="right-tabs">
+        <button type="button" role="tab" id="tab-block" data-tab="block" aria-selected="false" tabindex="-1" aria-controls="pane-block">Block</button>
+        <button type="button" role="tab" id="tab-email" data-tab="email" aria-selected="true" aria-controls="pane-email">Email</button>
+      </div>
+      <div class="pane" id="pane-block" role="tabpanel" aria-labelledby="tab-block" hidden><div id="block-settings"></div></div>
+      <div class="pane" id="pane-email" role="tabpanel" aria-labelledby="tab-email"><div id="email-settings"></div></div>
+    </aside>
+  </main>
+
+  <nav class="mobile-nav" aria-label="Panels">
+    <button type="button" data-view="blocks" aria-pressed="false"><span data-icon="blocks"></span>Add</button>
+    <button type="button" data-view="canvas" aria-pressed="true"><span data-icon="layout"></span>Canvas</button>
+    <button type="button" data-view="settings" aria-pressed="false"><span data-icon="sliders"></span>Settings</button>
+  </nav>
+</div>
+
+<dialog id="templates-dialog" aria-labelledby="templates-title">
+  <div class="dialog-head"><h2 id="templates-title">Start from a template</h2><button type="button" class="icon-btn" data-close aria-label="Close" data-icon="x"></button></div>
+  <p class="help">Choosing a template opens it as a new project. Your current project stays saved under Projects.</p>
+  <ul class="tpl-grid" id="templates-grid"></ul>
+</dialog>
+
+<dialog id="projects-dialog" aria-labelledby="projects-title">
+  <div class="dialog-head"><h2 id="projects-title">Projects</h2><button type="button" class="icon-btn" data-close aria-label="Close" data-icon="x"></button></div>
+  <p class="warn-box" id="projects-warning" hidden>Browser storage is unavailable, so projects only live in memory until you close this tab. Use “Export JSON” to keep a backup.</p>
+  <p class="help">Projects are saved automatically in this browser. Use JSON to back up or move them between devices.</p>
+  <div class="dialog-toolbar">
+    <button type="button" class="btn btn-primary" id="btn-new">New blank project</button>
+    <button type="button" class="btn" id="btn-json-import">Import JSON</button>
+    <button type="button" class="btn" id="btn-json-export">Export current as JSON</button>
+    <input type="file" id="json-file" accept="application/json,.json" hidden>
+  </div>
+  <ul class="proj-list" id="projects-list"></ul>
+</dialog>
+
+<dialog id="export-dialog" class="wide" aria-labelledby="export-title">
+  <div class="dialog-head"><h2 id="export-title" tabindex="-1">Export HTML</h2><button type="button" class="icon-btn" data-close aria-label="Close" data-icon="x"></button></div>
+  <p class="help">Self-contained HTML with inline CSS and table-based layout. Paste it into your email platform’s “custom HTML” editor, or send it as-is.</p>
+  <ul class="warnings" id="export-warnings" aria-label="Export checks"></ul>
+  <label class="sr-only" for="export-code">Generated HTML</label>
+  <textarea id="export-code" readonly spellcheck="false" rows="14"></textarea>
+  <div class="dialog-toolbar" id="export-actions">
+    <button type="button" class="btn btn-primary" id="btn-copy"><span data-icon="copy" data-size="16"></span> Copy HTML</button>
+    <button type="button" class="btn" id="btn-download"><span data-icon="download" data-size="16"></span> Download .html</button>
+    <span class="help">Size: <strong id="export-size">–</strong></span>
+  </div>
+</dialog>
+
+<div id="toasts" popover="manual" role="status" aria-live="polite"></div>
+</body>
+</html>
