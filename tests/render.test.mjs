@@ -142,3 +142,37 @@ test('checklist flags missing subject/unsubscribe and passes good emails', () =>
   assert.ok(!good.some((c) => c.level === 'warn'));
   assert.ok(good.some((c) => c.level === 'pass' && /unsubscribe/i.test(c.message)));
 });
+
+// ---- accessibility: starter templates must have readable text (WCAG AA) ----
+const lum = (hex) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => { const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+
+test('starter templates meet WCAG AA text contrast', () => {
+  const failures = [];
+  for (const t of TEMPLATES) {
+    const doc = t.build();
+    const s = doc.settings;
+    doc.blocks.forEach((b, i) => {
+      const bg = b.bg || s.contentBg;
+      const check = (label, fg, background, size, bold) => {
+        if (!fg || !background) return;
+        const large = size >= 24 || (bold && size >= 18.66);
+        const min = large ? 3 : 4.5;
+        const ratio = contrast(fg, background);
+        if (ratio < min) failures.push(`${t.id} #${i + 1} ${b.type} ${label}: ${ratio.toFixed(2)} < ${min}`);
+      };
+      if (b.type === 'heading') check('text', b.color || s.headingColor, bg, b.fontSize, b.bold);
+      else if (b.type === 'text') check('text', b.color || s.textColor, bg, b.fontSize, false);
+      else if (b.type === 'footer') check('text', b.color, bg, b.fontSize, false);
+      else if (b.type === 'quote') check('text', b.color || s.headingColor, bg, b.fontSize, false);
+      else if (b.type === 'button') check('label', b.textColor, b.fill || bg, b.fontSize, b.bold);
+      else if (b.type === 'columns') { check('title', s.headingColor, bg, b.titleSize, true); check('text', s.textColor, bg, b.textSize, false); check('link', s.linkColor, bg, b.textSize, true); }
+      else if (b.type === 'social') check('links', b.color || s.linkColor, bg, b.fontSize, b.bold);
+    });
+  }
+  assert.deepEqual(failures, []);
+});

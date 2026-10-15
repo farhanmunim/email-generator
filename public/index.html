@@ -1,13 +1,73 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Email Template Builder</title>
-<meta name="description" content="A free, lightweight visual email template builder. Drag, drop and customise blocks, preview on desktop and mobile, then export clean email-ready HTML.">
+<title>Free Email Template Builder – Design &amp; Export HTML Emails</title>
+<meta name="description" content="Build responsive HTML emails visually. Drag and drop blocks, preview on desktop and mobile, and export clean, email-ready HTML. Free, private, no sign-up.">
+<link rel="canonical" href="https://email-generator.farhan.app/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="application-name" content="Email Builder">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#4f46e5">
+
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Email Builder">
+<meta property="og:locale" content="en_GB">
+<meta property="og:url" content="https://email-generator.farhan.app/">
+<meta property="og:title" content="Free Email Template Builder – Design &amp; Export HTML Emails">
+<meta property="og:description" content="Build responsive HTML emails visually. Drag and drop blocks, preview on desktop and mobile, and export clean, email-ready HTML. Free, private, no sign-up.">
+<meta property="og:image" content="https://email-generator.farhan.app/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Email Builder: a visual editor with a block library, a live email canvas and a settings panel.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Free Email Template Builder – Design &amp; Export HTML Emails">
+<meta name="twitter:description" content="Build responsive HTML emails visually. Drag and drop blocks, preview on desktop and mobile, and export clean, email-ready HTML. Free, private, no sign-up.">
+<meta name="twitter:image" content="https://email-generator.farhan.app/og-image.jpg">
+<meta name="twitter:image:alt" content="Email Builder: a visual editor with a block library, a live email canvas and a settings panel.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://email-generator.farhan.app/#website",
+      "url": "https://email-generator.farhan.app/",
+      "name": "Email Builder",
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://email-generator.farhan.app/#app",
+      "url": "https://email-generator.farhan.app/",
+      "name": "Email Builder",
+      "description": "Build responsive HTML emails visually. Drag and drop blocks, preview on desktop and mobile, and export clean, email-ready HTML. Free, private, no sign-up.",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Any (web browser)",
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": "en-GB",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+      "featureList": [
+        "Drag-and-drop email blocks: headings, text, images, buttons, columns, quotes, social links, footers, dividers and spacers",
+        "Live desktop and mobile preview",
+        "Clean, table-based HTML export with inline CSS and a plain-text version",
+        "Starter templates and local project saving with JSON backup",
+        "Pre-send checklist, UTM link tagging and optional tracking pixel"
+      ],
+      "isPartOf": { "@id": "https://email-generator.farhan.app/#website" }
+    }
+  ]
+}
+</script>
+
 <link rel="stylesheet" href="css/styles.css">
 <style id="mobile-canvas-css"></style>
 <script type="module" src="js/main.js"></script>
@@ -16,13 +76,12 @@
 </head>
 <body>
 <a class="skip-link" href="#canvas">Skip to email canvas</a>
-<noscript><p class="noscript">This email builder needs JavaScript to run.</p></noscript>
 
 <div class="app" id="app" data-view="canvas" data-mode="edit" data-device="desktop">
   <header class="topbar">
     <div class="brand">
       <span class="logo" data-icon="layout" data-size="20" aria-hidden="true"></span>
-      <span class="brand-name">Email Builder</span>
+      <h1 class="brand-name">Email Builder<span class="sr-only"> – free email template builder</span></h1>
     </div>
     <div class="project">
       <label class="sr-only" for="project-name">Project name</label>
@@ -39,9 +98,16 @@
       <button type="button" class="btn btn-primary" id="btn-export"><span data-icon="code" data-size="16"></span><span class="btn-label">Export HTML</span></button>
     </div>
   </header>
+<noscript>
+  <div class="noscript">
+    <h2>Email Template Builder</h2>
+    <p>This free visual email builder needs JavaScript to run. Enable JavaScript to design responsive HTML emails with drag-and-drop blocks, preview them on desktop and mobile, and export clean, email-ready HTML.</p>
+  </div>
+</noscript>
 
   <main class="workspace">
-    <aside class="panel panel-left" id="panel-left" aria-label="Blocks and images">
+    <aside class="panel panel-left" id="panel-left" aria-labelledby="h-left">
+      <h2 class="sr-only" id="h-left">Blocks and images</h2>
       <div class="tabs" role="tablist" aria-label="Library" id="left-tabs">
         <button type="button" role="tab" id="tab-blocks" data-tab="blocks" aria-selected="true" aria-controls="pane-blocks">Blocks</button>
         <button type="button" role="tab" id="tab-images" data-tab="images" aria-selected="false" tabindex="-1" aria-controls="pane-images">Images</button>
@@ -63,7 +129,7 @@
             <input id="lib-alt" type="text" maxlength="300" autocomplete="off">
           </div>
           <div class="lib-buttons">
-            <button type="button" class="btn btn-primary" id="lib-add">Add to email</button>
+            <button type="submit" class="btn btn-primary" id="lib-add">Add to email</button>
             <button type="button" class="btn" id="lib-use" disabled>Use in selected image</button>
             <button type="button" class="btn" id="lib-save">Save to library</button>
           </div>
@@ -73,7 +139,8 @@
       </div>
     </aside>
 
-    <section class="stage" aria-label="Email canvas and preview">
+    <section class="stage" aria-labelledby="h-stage">
+      <h2 class="sr-only" id="h-stage">Email canvas and preview</h2>
       <div class="stage-bar">
         <div class="seg seg-buttons" role="group" aria-label="Mode">
           <button type="button" data-mode-btn="edit" aria-pressed="true"><span data-icon="edit" data-size="16"></span> Edit</button>
@@ -92,7 +159,8 @@
       </div>
     </section>
 
-    <aside class="panel panel-right" id="panel-right" aria-label="Settings">
+    <aside class="panel panel-right" id="panel-right" aria-labelledby="h-right">
+      <h2 class="sr-only" id="h-right">Settings</h2>
       <div class="tabs" role="tablist" aria-label="Settings" id="right-tabs">
         <button type="button" role="tab" id="tab-block" data-tab="block" aria-selected="false" tabindex="-1" aria-controls="pane-block">Block</button>
         <button type="button" role="tab" id="tab-email" data-tab="email" aria-selected="true" aria-controls="pane-email">Email</button>
@@ -107,7 +175,41 @@
     <button type="button" data-view="canvas" aria-pressed="true"><span data-icon="layout"></span>Canvas</button>
     <button type="button" data-view="settings" aria-pressed="false"><span data-icon="sliders"></span>Settings</button>
   </nav>
+  <footer class="site-footer">
+    <p>Free, private email template builder. Your projects stay in your browser.</p>
+    <button type="button" class="link-btn" id="btn-about">About &amp; shortcuts</button>
+  </footer>
 </div>
+
+<dialog id="about-dialog" aria-labelledby="about-title">
+  <div class="dialog-head"><h2 id="about-title">About Email Builder</h2><button type="button" class="icon-btn" data-close aria-label="Close" data-icon="x"></button></div>
+  <p>Email Builder is a free visual editor for responsive HTML emails. Arrange blocks, style them with simple controls, preview the result on desktop and mobile, then copy or download clean, email-ready HTML.</p>
+  <section class="about-section">
+    <h3>What you can do</h3>
+    <ul class="about-list">
+      <li>Build with headings, text, images, buttons, two-column cards, quotes, social links, footers, dividers and spacers.</li>
+      <li>Start from six starter templates or a blank canvas.</li>
+      <li>Export table-based HTML with inline CSS, plus a plain-text version.</li>
+      <li>Check subject line, preview text, alt text, unsubscribe link and message size before sending.</li>
+      <li>Add UTM parameters to links and an optional open-tracking pixel.</li>
+    </ul>
+  </section>
+  <section class="about-section">
+    <h3>Privacy</h3>
+    <p>Projects are saved only in this browser using local storage. Nothing you write is uploaded unless you choose to send a test email. Page views of the app itself are counted with a self-hosted analytics tool.</p>
+  </section>
+  <section class="about-section">
+    <h3>Keyboard shortcuts</h3>
+    <dl class="shortcuts">
+      <div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>Move between blocks</dd></div>
+      <div><dt><kbd>Alt</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd></dt><dd>Move the selected block</dd></div>
+      <div><dt><kbd>Enter</kbd></dt><dd>Edit the selected block</dd></div>
+      <div><dt><kbd>Ctrl/⌘</kbd> + <kbd>D</kbd></dt><dd>Duplicate block</dd></div>
+      <div><dt><kbd>Delete</kbd></dt><dd>Delete block</dd></div>
+      <div><dt><kbd>Ctrl/⌘</kbd> + <kbd>Z</kbd></dt><dd>Undo (add <kbd>Shift</kbd> to redo)</dd></div>
+    </dl>
+  </section>
+</dialog>
 
 <dialog id="templates-dialog" aria-labelledby="templates-title">
   <div class="dialog-head"><h2 id="templates-title">Start from a template</h2><button type="button" class="icon-btn" data-close aria-label="Close" data-icon="x"></button></div>

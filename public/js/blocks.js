@@ -24,7 +24,7 @@ export function fontStack(key, docFontKey = 'arial') {
 
 const ALIGN = [
   { value: 'left', label: 'Left' },
-  { value: 'center', label: 'Center' },
+  { value: 'center', label: 'Centre' },
   { value: 'right', label: 'Right' },
 ];
 
@@ -287,7 +287,7 @@ export const BLOCKS = {
       note: 'You are receiving this email because you signed up on our website.',
       unsubscribeLabel: 'Unsubscribe', unsubscribeUrl: '{{ unsubscribe_url }}',
       browserLabel: 'View in browser', browserUrl: '',
-      fontSize: 12, color: '#9ca3af', align: 'center', bg: '', ...padding(24, 32, 32, 32),
+      fontSize: 12, color: '#6b7280', align: 'center', bg: '', ...padding(24, 32, 32, 32),
     }),
     groups: [
       {

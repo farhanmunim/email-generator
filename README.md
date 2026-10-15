@@ -78,6 +78,15 @@ Alternative (CLI, no Git integration): `npx wrangler pages deploy public --proje
 
 `public/_headers` adds a strict Content-Security-Policy (scripts and styles from the same origin only; images allowed from any `https:` host so users' own image URLs work) and other hardening headers.
 
+## SEO, metadata and accessibility
+
+`public/index.html` carries the page metadata: title and description, `lang="en-GB"`, canonical URL, robots directive, Open Graph and Twitter/X cards (absolute `https://email-generator.farhan.app/og-image.jpg`, 1200 × 630), icons, theme colour and JSON-LD (`WebSite` + `WebApplication`). `public/404.html` is a real 404 (Cloudflare Pages serves it with status 404 and it is `noindex`), and `robots.txt` / `sitemap.xml` point at the production domain.
+
+- The page has one `h1`, landmark elements (`header`, `nav`, `main`, `aside`, `footer`) and a `<noscript>` fallback. The About dialog holds the crawlable description and keyboard shortcuts.
+- If the domain changes, update the URLs in `index.html`, `robots.txt`, `sitemap.xml` and `tests/seo.test.mjs`.
+- `npm test` includes `tests/seo.test.mjs` (metadata, canonical, social tags, image size, JSON-LD, heading order, local references) and a WCAG contrast check of every starter template.
+- To regenerate the social image and icons after a branding change, edit `scripts/assets/og-image.html` and run `scripts/assets/build-assets.mjs` (needs Playwright; see the file header).
+
 ## Optional: "Send a test" email
 
 The app itself needs no backend. If you want a **Send test** button in the export dialog, the repo includes a small Cloudflare Pages Function (`functions/api/send-test.js`) that sends through [Resend](https://resend.com) (free tier available). The button only appears when the function is configured.

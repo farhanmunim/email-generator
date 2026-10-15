@@ -90,7 +90,12 @@ const RENDERERS = {
       `text-align:${b.align}`,
     ].join(';');
     const html = raw ? esc(raw).replace(/\r?\n/g, '<br>') : placeholder('Empty heading');
-    return cell(b, `<${tag}${size > 28 ? ' class="em-h"' : ''} style="${style};">${html}</${tag}>`, b.align);
+    const cls = size > 28 ? ' class="em-h"' : '';
+    // In the editor the email is a preview inside the page, so its headings must not join the page outline.
+    const el = canvas
+      ? `<div role="heading" aria-level="3"${cls} style="${style};">${html}</div>`
+      : `<${tag}${cls} style="${style};">${html}</${tag}>`;
+    return cell(b, el, b.align);
   },
 
   text(b, doc, canvas) {
@@ -214,7 +219,10 @@ const RENDERERS = {
         parts.push(`<div style="font-size:0;line-height:0;padding:0 0 14px 0;">${url ? `<a href="${esc(url)}" target="_blank" style="text-decoration:none;">${tag}</a>` : tag}</div>`);
       }
       const font = `font-family:${fontStack('inherit', s.fontFamily)};text-align:${align};`;
-      if (title) parts.push(`<h3 style="margin:0 0 8px 0;padding:0;${font}font-size:${titleSize}px;line-height:${Math.round(titleSize * 1.3)}px;mso-line-height-rule:exactly;font-weight:700;color:${s.headingColor};">${esc(title)}</h3>`);
+      if (title) {
+        const open = canvas ? '<div role="heading" aria-level="3"' : '<h3';
+        parts.push(`${open} style="margin:0 0 8px 0;padding:0;${font}font-size:${titleSize}px;line-height:${Math.round(titleSize * 1.3)}px;mso-line-height-rule:exactly;font-weight:700;color:${s.headingColor};">${esc(title)}${canvas ? '</div>' : '</h3>'}`);
+      }
       if (text) parts.push(`<p style="margin:0;padding:0;${font}font-size:${textSize}px;line-height:${Math.round(textSize * 1.55)}px;mso-line-height-rule:exactly;color:${s.textColor};">${esc(text).replace(/\r?\n/g, '<br>')}</p>`);
       if (label && url) parts.push(`<p style="margin:12px 0 0 0;padding:0;${font}font-size:${textSize}px;line-height:${Math.round(textSize * 1.4)}px;"><a href="${esc(url)}" target="_blank" style="color:${s.linkColor};font-weight:700;text-decoration:underline;">${esc(label)}</a></p>`);
       if (parts.length) any = true;

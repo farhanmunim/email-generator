@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(fileURLToPath(new URL('../public/', import.meta.url)));
 const port = Number(process.env.PORT) || 8788;
-const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.json': 'application/json' };
+const types = { '.png': 'image/png', '.jpg': 'image/jpeg', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.json': 'application/json' };
 
 let csp = '';
 try {
@@ -18,6 +18,11 @@ try {
 createServer(async (req, res) => {
   try {
     let path = normalize(decodeURIComponent(new URL(req.url, 'http://x').pathname));
+    if (path === '/api/send-test') {
+      // Mirrors the Pages Function when it is not configured (see functions/api/send-test.js).
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ enabled: false }));
+    }
     if (path.endsWith('/')) path += 'index.html';
     const file = join(root, path);
     if (!file.startsWith(root)) throw new Error('forbidden');
@@ -25,7 +30,9 @@ createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream', ...(csp && { 'Content-Security-Policy': csp }) });
     res.end(await readFile(file));
   } catch {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not found');
+    // Like Cloudflare Pages: serve 404.html with a real 404 status.
+    const body = await readFile(join(root, '404.html')).catch(() => 'Not found');
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(body);
   }
 }).listen(port, () => console.log(`http://localhost:${port}`));

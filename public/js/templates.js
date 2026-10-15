@@ -63,7 +63,7 @@ export const TEMPLATES = [
       B('text', { text: 'Our biggest sale of the year is here. Stock up on the favourites you love before they’re gone.\n\nOffer ends Sunday at midnight.', align: 'center', paddingTop: 28 }),
       B('button', { text: 'Shop the sale', url: 'https://example.com/sale', fill: '#be123c', radius: 999, fontSize: 18, padX: 40, paddingBottom: 40 }),
       B('social', { website: 'https://example.com', instagram: 'https://instagram.com/example', x: 'https://x.com/example', bg: '#f3f4f6', paddingTop: 20, paddingBottom: 0 }),
-      B('footer', { company: 'ACME Inc.', address: '123 Example Street, City', note: '', unsubscribeUrl: 'https://example.com/unsubscribe', color: '#6b7280', bg: '#f3f4f6', paddingTop: 8, paddingBottom: 24 }),
+      B('footer', { company: 'ACME Inc.', address: '123 Example Street, City', note: '', unsubscribeUrl: 'https://example.com/unsubscribe', color: '#4b5563', bg: '#f3f4f6', paddingTop: 8, paddingBottom: 24 }),
     ], { subject: 'Summer sale: up to 50% off, this weekend only', preheader: 'Up to 50% off — this weekend only.' }),
   },
   {
@@ -80,7 +80,7 @@ export const TEMPLATES = [
       B('heading', { text: 'Faster. Calmer. Yours.', level: 2, fontSize: 22, paddingTop: 16, paddingBottom: 8 }),
       B('text', { text: '• Instant sync across every device\n• A focus mode that mutes the noise\n• Shortcuts for everything you do twice', lineHeight: 1.8, paddingBottom: 36 }),
       B('quote', { quote: '“Orbit gave us back an hour every single day.”', author: 'Priya Shah', role: 'Head of Ops, Northwind', accent: '#7c9cff', fontSize: 18, paddingTop: 0, paddingBottom: 36 }),
-      B('footer', { company: 'Orbit Labs', address: '123 Example Street, City', note: '', unsubscribeUrl: 'https://example.com/unsubscribe', color: '#6b7280', bg: '#070a12' }),
+      B('footer', { company: 'Orbit Labs', address: '123 Example Street, City', note: '', unsubscribeUrl: 'https://example.com/unsubscribe', color: '#9ca3af', bg: '#070a12' }),
     ], { subject: 'Meet Orbit 2.0',  bg: '#05070d', contentBg: '#0b0f1a', textColor: '#a8b0c3', headingColor: '#ffffff', linkColor: '#7c9cff', fontFamily: 'system', outerPadding: 32, preheader: 'Orbit 2.0 is here — faster, calmer, yours.' }),
   },
   {
@@ -95,7 +95,7 @@ export const TEMPLATES = [
       B('image', { src: hero('Garden Room', 'ede0cf', '9a3412', 500, 280), alt: 'The Garden Room set for dinner', paddingLeft: 40, paddingRight: 40, paddingBottom: 4 }),
       B('text', { text: 'Join us for a long table, seasonal food and good company. Seats are limited, so please let us know by 5 October.', align: 'center', paddingTop: 20, paddingLeft: 48, paddingRight: 48 }),
       B('button', { text: 'RSVP by 5 October', url: 'https://example.com/rsvp', fill: '#9a3412', radius: 2, fontFamily: 'georgia', paddingTop: 12, paddingBottom: 48 }),
-      B('footer', { company: 'The Garden Room', address: '14 Elm Street, City', note: 'Can’t make it? Let us know and we’ll save you a seat next time.', unsubscribeUrl: 'https://example.com/unsubscribe', color: '#8a7a70', bg: '#f5efe6' }),
+      B('footer', { company: 'The Garden Room', address: '14 Elm Street, City', note: 'Can’t make it? Let us know and we’ll save you a seat next time.', unsubscribeUrl: 'https://example.com/unsubscribe', color: '#6b5a50', bg: '#f5efe6' }),
     ], { subject: 'You’re invited: Autumn Supper Club, 12 October',  width: 560, bg: '#f5efe6', contentBg: '#fffdf8', textColor: '#5a4a42', headingColor: '#3b2f2f', linkColor: '#9a3412', fontFamily: 'georgia', outerPadding: 32, preheader: 'Saturday 12 October at The Garden Room — RSVP by 5 October.' }),
   },
   {

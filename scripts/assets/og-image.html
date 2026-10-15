@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Social card source (1200×630)</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { width: 1200px; height: 630px; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #fff;
+    background: radial-gradient(900px 500px at 85% 15%, #6366f1 0%, rgba(99,102,241,0) 60%), linear-gradient(135deg, #312e81 0%, #4f46e5 55%, #4338ca 100%);
+    display: grid; grid-template-columns: 1fr 470px; gap: 40px; padding: 70px 80px 0 80px; }
+  .left { display: grid; align-content: center; gap: 26px; padding-bottom: 70px; }
+  .brand { display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 700; }
+  .logo { width: 52px; height: 52px; border-radius: 14px; background: #fff; display: grid; place-items: center; }
+  h1 { margin: 0; font-size: 76px; line-height: 1.02; letter-spacing: -0.03em; font-weight: 800; }
+  p { margin: 0; font-size: 31px; line-height: 1.35; color: #e0e7ff; max-width: 560px; }
+  .chips { display: flex; gap: 12px; }
+  .chips span { padding: 8px 18px; border-radius: 999px; background: rgba(255,255,255,0.16); font-size: 22px; font-weight: 600; }
+  .card { align-self: end; background: #fff; border-radius: 22px 22px 0 0; box-shadow: 0 30px 80px rgba(15,23,42,0.45); overflow: hidden; color: #111827; height: 520px; }
+  .bar { height: 40px; background: #f1f2f5; display: flex; align-items: center; gap: 8px; padding: 0 18px; }
+  .bar i { width: 12px; height: 12px; border-radius: 50%; background: #d0d5dd; display: block; }
+  .mail { margin: 22px 26px 0; background: #fff; border: 1px solid #e5e7eb; }
+  .mail .top { background: #111827; color: #fff; text-align: center; font-weight: 800; letter-spacing: 0.08em; padding: 16px; font-size: 18px; }
+  .mail .hero { height: 150px; background: linear-gradient(135deg, #c7d2fe, #e0e7ff); }
+  .mail h2 { margin: 0; padding: 26px 24px 8px; text-align: center; font-size: 34px; letter-spacing: -0.02em; }
+  .mail .line { height: 12px; margin: 10px 40px; border-radius: 6px; background: #e5e7eb; }
+  .mail .line.short { margin: 10px 90px; }
+  .mail .btn { margin: 24px auto 0; width: 210px; padding: 15px 0; border-radius: 8px; background: #2563eb; color: #fff; text-align: center; font-weight: 700; font-size: 18px; }
+</style></head>
+<body>
+  <div class="left">
+    <div class="brand"><span class="logo"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#4f46e5" stroke-width="2.4" stroke-linejoin="round"><rect x="5" y="7" width="22" height="18" rx="3"/><path d="m6 10 10 7 10-7"/></svg></span>Email Builder</div>
+    <h1>Email Template Builder</h1>
+    <p>Design responsive HTML emails visually. Preview, then export clean, email-ready code.</p>
+    <div class="chips"><span>Free</span><span>Private</span><span>No sign-up</span></div>
+  </div>
+  <div class="card" aria-hidden="true">
+    <div class="bar"><i></i><i></i><i></i></div>
+    <div class="mail">
+      <div class="top">ACME</div><div class="hero"></div>
+      <h2>Welcome aboard!</h2>
+      <div class="line"></div><div class="line short"></div>
+      <div class="btn">Set up your account</div>
+    </div>
+  </div>
+</body></html>

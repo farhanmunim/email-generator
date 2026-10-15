@@ -193,6 +193,8 @@ function loadDoc(doc, message) {
   if (message) toast(message);
 }
 
+$('#btn-about').addEventListener('click', () => openDialog('about-dialog'));
+
 // Templates
 const tplGrid = $('#templates-grid');
 function buildTemplates() {
