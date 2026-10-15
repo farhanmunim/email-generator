@@ -6,6 +6,7 @@ import { join } from 'node:path';
 
 const PUBLIC = new URL('../public/', import.meta.url).pathname;
 const ORIGIN = 'https://email-generator.farhan.app';
+const APP = 'Email Template Builder';
 const read = (f) => readFileSync(join(PUBLIC, f), 'utf8');
 const pages = { 'index.html': read('index.html'), '404.html': read('404.html') };
 
@@ -39,8 +40,11 @@ for (const [file, html] of Object.entries(pages)) {
     const desc = meta(html, 'name', 'description');
     assert.ok(desc && desc.length >= 70 && desc.length <= 160, `description length ${desc?.length}`);
     assert.ok(meta(html, 'name', 'theme-color'));
-    assert.match(html, /<link rel="icon" href="\/?favicon\.svg"/);
+    assert.match(html, /<link rel="icon" href="data:image\/svg\+xml,%3Csvg[^"]+" type="image\/svg\+xml">/, 'inline SVG favicon');
     assert.match(html, /<link rel="apple-touch-icon"/);
+    assert.equal(meta(html, 'name', 'author'), 'farhan.app');
+    assert.ok(decode(title).endsWith(' — farhan.app'), 'title has the farhan.app suffix');
+    assert.ok(desc.endsWith('. Built by Farhan — farhan.app'), 'description ends with the farhan.app credit');
     assert.equal((html.match(/<h1\b/g) || []).length, 1, 'exactly one h1');
   });
 }
@@ -56,22 +60,25 @@ test('index.html: canonical, robots, Open Graph and Twitter cards', () => {
   const html = pages['index.html'];
   const canonical = attr(/<link rel="canonical"[^>]*>/.exec(html)[0], 'href');
   assert.equal(canonical, `${ORIGIN}/`);
+  assert.equal(`${ORIGIN}/`, `${meta(html, 'property', 'og:url')}/`, 'og:url matches canonical');
+  assert.equal(decode(/<title>([^<]+)/.exec(html)[1]), `${APP} — farhan.app`);
   assert.match(meta(html, 'name', 'robots'), /index/);
   assert.ok(!/noindex/.test(meta(html, 'name', 'robots')));
   const title = decode(/<title>([^<]+)/.exec(html)[1]);
   const desc = meta(html, 'name', 'description');
   assert.equal(meta(html, 'property', 'og:title'), title);
-  assert.equal(meta(html, 'property', 'og:description'), desc);
+  const ogDesc = meta(html, 'property', 'og:description');
+  assert.ok(ogDesc && ogDesc.length >= 40 && !/Built by/.test(ogDesc), 'og:description is the one-liner');
   assert.equal(meta(html, 'property', 'og:type'), 'website');
-  assert.equal(meta(html, 'property', 'og:url'), canonical);
-  assert.equal(meta(html, 'property', 'og:site_name'), 'Email Builder');
+  assert.equal(meta(html, 'property', 'og:url'), ORIGIN);
+  assert.equal(meta(html, 'property', 'og:site_name'), APP);
   assert.equal(meta(html, 'property', 'og:locale'), 'en_GB');
   const image = meta(html, 'property', 'og:image');
   assert.match(image, new RegExp(`^${ORIGIN}/[\\w.-]+\\.jpg$`), 'absolute https image on production domain');
   assert.equal(meta(html, 'property', 'og:image:width'), '1200');
   assert.equal(meta(html, 'property', 'og:image:height'), '630');
   assert.ok(meta(html, 'property', 'og:image:alt'));
-  assert.equal(meta(html, 'name', 'twitter:card'), 'summary_large_image');
+  assert.equal(meta(html, 'name', 'twitter:card'), 'summary');
   assert.equal(meta(html, 'name', 'twitter:title'), title);
   assert.equal(meta(html, 'name', 'twitter:description'), desc);
   assert.equal(meta(html, 'name', 'twitter:image'), image);
@@ -82,10 +89,38 @@ test('index.html: canonical, robots, Open Graph and Twitter cards', () => {
   assert.ok(readFileSync(file).length < 300 * 1024, 'og image is a reasonable size');
 });
 
+test('footer: About · Privacy · Source · tagline · Built by, in order', () => {
+  const html = pages['index.html'];
+  const footer = /<footer class="site-footer">([\s\S]*?)<\/footer>/.exec(html)[1];
+  const items = [...footer.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').trim());
+  assert.deepEqual(items, ['About', 'Privacy', 'Source', 'Runs in your browser', 'Built by Farhan']);
+  assert.match(footer, /<button type="button" class="link-btn" id="btn-about">/);
+  assert.match(footer, /<button type="button" class="link-btn" id="btn-privacy">/);
+  assert.match(footer, /href="https:\/\/github\.com\/farhanmunim\/email-generator"/);
+  assert.match(footer, /Built by <a href="https:\/\/farhan\.app">Farhan<\/a>/);
+  // the footer sits before the mobile nav so it can never overlap it
+  assert.ok(html.indexOf('class="site-footer"') < html.indexOf('class="mobile-nav"'));
+});
+
+test('About modal has the required sections in order', () => {
+  const html = pages['index.html'];
+  const modal = /<dialog id="about-dialog"[\s\S]*?<\/dialog>/.exec(html)[0];
+  const heads = [...modal.matchAll(/<h([23])[^>]*>([^<]+)<\/h\1>/g)].map((m) => m[2]);
+  assert.deepEqual(heads, [`About ${APP}`, 'Privacy', 'Source', 'Developer', 'Support']);
+  assert.match(modal, /cookieless/);
+  assert.match(modal, /href="https:\/\/buymeacoffee\.com\/farhan\.app"/);
+  assert.match(modal, /Farhan Munim/);
+  assert.ok(existsSync(new URL('../LICENSE', import.meta.url).pathname), 'LICENSE file exists for the stated licence');
+});
+
 test('404.html is noindex and links home', () => {
   const html = pages['404.html'];
   assert.match(meta(html, 'name', 'robots'), /noindex/);
   assert.match(html, /<a href="\/">/);
+  assert.equal(meta(html, 'name', 'author'), 'farhan.app');
+  assert.ok(/<title>[^<]*— farhan\.app<\/title>/.test(html));
+  assert.match(html, /<link rel="icon" href="data:image\/svg\+xml,/);
+  assert.match(html, /Built by <a href="https:\/\/farhan\.app">Farhan<\/a>/);
   assert.ok(!/rel="canonical"/.test(html));
 });
 
@@ -93,11 +128,12 @@ test('JSON-LD is valid and matches visible content', () => {
   const html = pages['index.html'];
   const raw = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)[1];
   const data = JSON.parse(raw);
+  assert.equal(data['@graph'][1].author.url, 'https://farhan.app');
   const types = data['@graph'].map((n) => n['@type']);
   assert.deepEqual(types, ['WebSite', 'WebApplication']);
   const app = data['@graph'][1];
   assert.equal(app.url, `${ORIGIN}/`);
-  assert.equal(app.description, meta(html, 'name', 'description'));
+  assert.ok(meta(html, 'name', 'description').startsWith(app.description.replace(/\.$/, '')));
   assert.ok(!('aggregateRating' in app) && !('review' in app), 'no invented ratings or reviews');
   assert.equal(app.offers.price, '0');
 });
@@ -133,6 +169,6 @@ test('robots.txt and sitemap.xml point at the production domain', () => {
 test('every local file referenced from index.html exists', () => {
   const html = pages['index.html'];
   const refs = [...html.matchAll(/(?:href|src)="([^"#:]+)"/g)].map((m) => m[1]).filter((r) => !r.startsWith('http') && !r.startsWith('//'));
-  assert.ok(refs.length >= 5);
+  assert.ok(refs.length >= 3);
   for (const ref of refs) assert.ok(existsSync(join(PUBLIC, ref)), `missing ${ref}`);
 });

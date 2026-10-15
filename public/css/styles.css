@@ -295,8 +295,7 @@ dialog[open] { display: grid; gap: 12px; align-content: start; }
 }
 
 @media (max-width: 1023px) {
-  .app { grid-template-rows: var(--topbar-h) minmax(0, 1fr) var(--nav-h); }
-  .site-footer { display: none; }
+  .app { grid-template-rows: var(--topbar-h) minmax(0, 1fr) auto var(--nav-h); }
   .workspace { grid-template-columns: minmax(0, 1fr); }
   .panel, .stage { display: none; }
   .app[data-view="blocks"] .panel-left,
@@ -451,12 +450,13 @@ input[type="text"], input[type="url"], input[type="number"], input[type="email"]
 .brand-name { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
 .noscript { max-width: 40rem; margin: 10vh auto; padding: 1.5rem; display: grid; gap: 0.75rem; }
 .noscript h2 { font-size: 1.5rem; }
-.site-footer {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  padding: 5px var(--gap); background: var(--surface); border-top: 1px solid var(--border); font-size: 12px; color: var(--muted);
-}
-.link-btn { border: 0; background: none; padding: 2px 4px; font-size: 12px; color: var(--accent-strong); text-decoration: underline; border-radius: 4px; }
-.link-btn:hover { color: var(--accent); }
+.site-footer { padding: 6px var(--gap); background: var(--surface); border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+.footer-line { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: 0; row-gap: 2px; margin: 0; padding: 0; list-style: none; }
+.footer-line li { display: block; }
+.footer-line li + li::before { content: "·"; margin: 0 8px; color: var(--muted); }
+.footer-line a, .link-btn { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+.footer-line a:hover, .link-btn:hover { color: var(--accent-strong); }
+.link-btn { border: 0; background: none; padding: 2px 0; font: inherit; border-radius: 4px; cursor: pointer; }
 .about-section { display: grid; gap: 6px; }
 .about-section h3 { font-size: 14px; }
 .about-list { display: grid; gap: 4px; padding-left: 1.1rem; list-style: disc; }
@@ -465,3 +465,18 @@ input[type="text"], input[type="url"], input[type="number"], input[type="email"]
 .shortcuts dt { white-space: nowrap; }
 .shortcuts dd { margin: 0; color: var(--muted); text-align: right; }
 kbd { font: 600 11.5px ui-monospace, SFMono-Regular, Menlo, monospace; padding: 1px 5px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; background: var(--surface-2); }
+
+.about-more { margin-top: 4px; }
+.about-more summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+.about-more .shortcuts { margin-top: 6px; }
+.about-section a:not(.btn) { color: var(--accent-strong); }
+.about-section h3:focus { outline: none; }
+dialog .about-section + .about-section { border-top: 1px solid var(--border); padding-top: 12px; }
+
+a.btn { text-decoration: none; color: var(--text); }
+a.btn:hover { text-decoration: none; }
+@media (max-width: 720px) {
+  /* No separators on small screens: a wrapped line must never start or end with a stray dot. */
+  .footer-line { column-gap: 16px; }
+  .footer-line li + li::before { content: none; }
+}

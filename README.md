@@ -80,12 +80,12 @@ Alternative (CLI, no Git integration): `npx wrangler pages deploy public --proje
 
 ## SEO, metadata and accessibility
 
-`public/index.html` carries the page metadata: title and description, `lang="en-GB"`, canonical URL, robots directive, Open Graph and Twitter/X cards (absolute `https://email-generator.farhan.app/og-image.jpg`, 1200 × 630), icons, theme colour and JSON-LD (`WebSite` + `WebApplication`). `public/404.html` is a real 404 (Cloudflare Pages serves it with status 404 and it is `noindex`), and `robots.txt` / `sitemap.xml` point at the production domain.
+`public/index.html` carries the page metadata: the `{App Name} — farhan.app` title, author, description (`… Built by Farhan — farhan.app`), `lang="en-GB"`, canonical URL, robots directive, Open Graph and Twitter/X cards (absolute `https://email-generator.farhan.app/og-image.jpg`, 1200 × 630), an inline SVG favicon (the same logo as the UI), theme colour and JSON-LD (`WebSite` + `WebApplication`). `public/404.html` is a real 404 (Cloudflare Pages serves it with status 404 and it is `noindex`), and `robots.txt` / `sitemap.xml` point at the production domain.
 
-- The page has one `h1`, landmark elements (`header`, `nav`, `main`, `aside`, `footer`) and a `<noscript>` fallback. The About dialog holds the crawlable description and keyboard shortcuts.
+- The page has one `h1`, landmark elements (`header`, `nav`, `main`, `aside`, `footer`) and a `<noscript>` fallback. The persistent footer (About · Privacy · Source · tagline · Built by Farhan) opens the About modal, which covers privacy (including the analytics position), source and licence, developer and support.
 - If the domain changes, update the URLs in `index.html`, `robots.txt`, `sitemap.xml` and `tests/seo.test.mjs`.
 - `npm test` includes `tests/seo.test.mjs` (metadata, canonical, social tags, image size, JSON-LD, heading order, local references) and a WCAG contrast check of every starter template.
-- To regenerate the social image and icons after a branding change, edit `scripts/assets/og-image.html` and run `scripts/assets/build-assets.mjs` (needs Playwright; see the file header).
+- To regenerate the social image and Apple touch icon after a branding change, edit `scripts/assets/og-image.html` and run `scripts/assets/build-assets.mjs` (needs Playwright; see the file header).
 
 ## Optional: "Send a test" email
 
@@ -111,6 +111,10 @@ The generator follows established HTML-email practice, but it has **not** been t
 - Gmail clips messages over ~102 KB; the export dialog warns you.
 - Starter templates use `placehold.co` placeholder images purely as sample content — replace them with your own image URLs.
 - Merge tags such as `{{ first_name }}` or `*|FNAME|*` can be typed into text and link fields and are passed through unchanged. Link destinations beginning with `javascript:`, `data:` etc. are rejected.
+
+## Licence
+
+MIT — see `LICENSE`.
 
 ## Data & privacy
 

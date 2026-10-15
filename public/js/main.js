@@ -193,7 +193,17 @@ function loadDoc(doc, message) {
   if (message) toast(message);
 }
 
-$('#btn-about').addEventListener('click', () => openDialog('about-dialog'));
+function openAbout(sectionId) {
+  const dlg = openDialog('about-dialog');
+  dlg.scrollTop = 0;
+  if (sectionId) {
+    const heading = $(`#${sectionId} h3`);
+    heading?.scrollIntoView({ block: 'start' });
+    heading?.focus({ preventScroll: true });
+  }
+}
+$('#btn-about').addEventListener('click', () => openAbout());
+$('#btn-privacy').addEventListener('click', () => openAbout('about-privacy'));
 
 // Templates
 const tplGrid = $('#templates-grid');
